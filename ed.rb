@@ -7,20 +7,20 @@ class REPL
         if ARGV[0] # ファイルが指定された時
             f = open(ARGV[0])
             f.each do |line|
-                @buffer.push(line.chomp) # 改行コードを消してバッファーに読み込む
+                @buffer.push line.chomp # 改行コードを消してバッファーに読み込む
             end
-            puts("-- #{ARGV[0]} opend --")
-            puts(@buffer)
+            puts "-- #{ARGV[0]} opend --"
+            puts @buffer
         end
-        loop{
+        loop do
             ed_read
             ed_eval
             ed_print
-        }
+        end
     end
 
     def ed_read # コマンド受け付け
-        print(@prompt) # プロンプト出力
+        print @prompt # プロンプト出力
         @input = STDIN.gets(chomp: true).split(" ")
     end
 
@@ -54,7 +54,7 @@ class REPL
     end
     
     def ed_print # 結果を出力
-        puts(@output)
+        puts @output
     end
 end
 
