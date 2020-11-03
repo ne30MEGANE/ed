@@ -29,7 +29,7 @@ class REPL
 
     def ed_eval # 解釈
         addr = "(?:\d+|[.$,;]|\/.*\/)"
-        cmnd = "(?:[acdgijnpqw=ε]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
+        cmnd = "(?:[acdgijnpqw=]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
         prmt = "(?:.*)"
         if @input =~ /\A(#{addr}(,#{addr})?)?(#{cmnd})(#{prmt})?\z/
         
