@@ -28,11 +28,21 @@ class REPL
     end
 
     def ed_eval # 解釈
-        addr = "(?:\d+|[.$,;]|\/.*\/)"
+        addr = "(?:\d+|[.$,;]|\/.*\/)" # 数字か.$,;か正規表現(任意の文字列)
         cmnd = "(?:[acdgijnpqw=]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
-        prmt = "(?:.*)"
+        prmt = "(?:.*)" # 任意の文字列
         if @input =~ /\A(#{addr}(,#{addr})?)?(#{cmnd})(#{prmt})?\z/
-        
+            # p $1, $2, $3, $4 # for debug
+            # $1 addr,addrか左側だけ / $2 addr右側 ←指定されてなかったらnil
+            # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
+            case $3 # コマンドによって分岐
+            when "q" then
+                if $1 or $2 or $3.empty? # addrか指定されている
+                    @output = "?"
+                else
+                    exit
+                end
+            end
         else
             @output = "?" #どのコマンドにも当てはまらない時
         end
