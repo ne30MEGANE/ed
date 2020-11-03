@@ -25,6 +25,7 @@ class REPL
 
     private
     def ed_read # コマンド受け付け
+        @output = "" # 出力用変数を空にする
         print @prompt # プロンプト出力
         @input = STDIN.gets(chomp: true)
     end
@@ -37,13 +38,32 @@ class REPL
             # p $1, $2, $3, $4 # for debug
             # $1 addr,addrか左側だけ / $2 addr右側 ←指定されてなかったらnil
             # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
+
+            begin
             case $3 # コマンドによって分岐
-            when "q" then
-                if $1 or $2 or $3.empty? # addrか指定されている
-                    @output = "?"
-                else
-                    exit
+                when "p", "n" then # 出力
+                    # p addr_num $1, $2 # for debug
+                    if $4.empty? # prmtが指定されていないとき
+                        n = addr_num $1, $2
+                        n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
+                            if $3 == "p" # 普通に出力(pコマンド)
+                                puts @buffer[i-1]
+                            else # 行番号と一緒に出力(nコマンド)
+                                puts "#{i}: #{@buffer[i-1]}"
+                            end
+                        end
+                    else # エラー
+                        @output = "?"
+                    end
+                when "q" then # 終了
+                    if $1 or $2 or $3.empty? # addrかprmtが指定されていないとき
+                        @output = "?"
+                    else
+                        exit
+                    end
                 end
+            rescue # コマンドとして認識されたけどそれ以降の処理でエラーになったやつを全部キャッチして？だす
+                @output = "?"
             end
         else
             @output = "?" #どのコマンドにも当てはまらない時
@@ -51,7 +71,16 @@ class REPL
     end
     
     def ed_print # 結果を出力
-        puts @output
+        puts @output unless @output.empty? # 出力内容がある時だけ
+    end
+
+    def addr_num a, b # $1$2を引数にとってn,mをintの[n,m]っていう配列にするやつ
+        if b # $2がnilじゃない時
+            ans = a.split(",") # カンマ区切りで前と後ろに分ける
+            [ans[0].to_i, ans[1].to_i] # int配列にして返す
+        else # $2に何も入ってなくてアドレスが一個しか指定されない時
+            [a.to_i, a.to_i] # nをn,nという認識にして配列で返す
+        end
     end
 end
 
