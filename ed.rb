@@ -21,33 +21,15 @@ class REPL
 
     def ed_read # コマンド受け付け
         print @prompt # プロンプト出力
-        @input = STDIN.gets(chomp: true).split(" ")
+        @input = STDIN.gets(chomp: true)
     end
 
     def ed_eval # 解釈
-        case @input[0]
-        when "a" then
-            @output = "a"
-        when "c" then
-            @output = "c"
-        when "d" then
-            @output = "d"
-        when "g" then
-            @output = "g"
-        when "i" then
-            @output = "i"
-        when "j" then
-            @output = "j"
-        when "n" then
-            @output = "n"
-        when "q" then
-            @output = "q"
-        when "w" then
-            @output = "w"
-        when "wq" then
-            @output = "wq"
-        when "=" then
-            @output = "="
+        addr = "(?:\d+|[.$,;]|\/.*\/)"
+        cmnd = "(?:[acdgijnpqw=ε]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
+        prmt = "(?:.*)"
+        if @input =~ /\A(#{addr}(,#{addr})?)?(#{cmnd})(#{prmt})?\z/
+        
         else
             @output = "?" #どのコマンドにも当てはまらない時
         end
