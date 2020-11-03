@@ -11,6 +11,8 @@ class REPL
             end
             puts "-- #{ARGV[0]} opend --"
             puts @buffer
+        else
+            puts "-- new file created --"
         end
         loop do
             ed_read
@@ -19,6 +21,7 @@ class REPL
         end
     end
 
+    private
     def ed_read # コマンド受け付け
         print @prompt # プロンプト出力
         @input = STDIN.gets(chomp: true)
