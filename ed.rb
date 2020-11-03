@@ -1,6 +1,7 @@
 class REPL
     def initialize
         @buffer = Array.new # バッファ
+        @cl = 0 # カレント行
         @input = Array.new # 毎回の入力用
         @output = Array.new # 毎回の出力用
         @prompt = "command>" # プロンプト
@@ -9,6 +10,7 @@ class REPL
             f.each do |line|
                 @buffer.push line.chomp # 改行コードを消してバッファーに読み込む
             end
+            @cl = @buffer.size - 1 # ファイルを読み込んだ時のカレント行は一番最後(配列のサイズ-1)
             puts "-- #{ARGV[0]} opend --"
             puts @buffer
         else
