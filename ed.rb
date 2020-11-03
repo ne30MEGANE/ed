@@ -29,7 +29,7 @@ class REPL
 
     def ed_eval # 解釈
         addr = "(?:\d+|[.$,;]|\/.*\/)" # 数字か.$,;か正規表現(任意の文字列)
-        cmnd = "(?:[acdgijnpqw=]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
+        cmnd = "(?:[acdgijnpqrw=]|wq|\z)" # 1文字のコマンド各種 or wqコマンド
         prmt = "(?:.*)" # 任意の文字列
         if @input =~ /\A(#{addr}(,#{addr})?)?(#{cmnd})(#{prmt})?\z/
             # p $1, $2, $3, $4 # for debug
