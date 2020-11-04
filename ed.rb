@@ -74,12 +74,27 @@ class REPL
         puts @output unless @output.empty? # 出力内容がある時だけ
     end
 
-    def addr_num a, b # $1$2を引数にとってn,mをintの[n,m]っていう配列にするやつ
-        if b # $2がnilじゃない時
-            ans = a.split(",") # カンマ区切りで前と後ろに分ける
-            [ans[0].to_i, ans[1].to_i] # int配列にして返す
-        else # $2に何も入ってなくてアドレスが一個しか指定されない時
-            [a.to_i, a.to_i] # nをn,nという認識にして配列で返す
+    def addr_num a, b # 記号とか数字とか解釈してユーザが指定した行の数字を配列で返すマン
+        case a
+        when "." then # カレント行
+            [@cl + 1, @cl + 1]
+        when "$" then # 最後の行
+            [@buffer.size, @buffer.size]
+        when "," then # 1,$
+            [1, @buffer.size]
+        when ";" then # .,$
+            [@cl + 1, @buffer.size]
+        when /\d/ then # 数字で直接指定
+            if b # $2がnilじゃない時
+                ans = a.split(",") # カンマ区切りで前と後ろに分ける
+                [ans[0].to_i, ans[1].to_i] # int配列にして返す
+            else # $2に何も入ってなくてアドレスが一個しか指定されない時
+                [a.to_i, a.to_i] # nをn,nという認識にして配列で返す
+            end
+        when /.*/ then # 正規表現
+            # あとで
+        else
+            [nil, nil]
         end
     end
 end
