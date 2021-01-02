@@ -40,28 +40,7 @@ class REPL
             # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
 
             begin
-            case $3 # コマンドによって分岐
-                when "p", "n" then # 出力
-                    # p addr_num $1, $2 # for debug
-                    if $4.empty? # prmtが指定されていないとき
-                        n = addr_num $1, $2
-                        n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
-                            if $3 == "p" # 普通に出力(pコマンド)
-                                puts @buffer[i-1]
-                            else # 行番号と一緒に出力(nコマンド)
-                                puts "#{i}: #{@buffer[i-1]}"
-                            end
-                        end
-                    else # エラー
-                        @output = "?"
-                    end
-                when "q" then # 終了
-                    if $1 or $2 or $3.empty? # addrかprmtが指定されていないとき
-                        @output = "?"
-                    else
-                        exit
-                    end
-                end
+                self.send("cmd_#{$3}", $1, $2, $3, $4)
             rescue # コマンドとして認識されたけどそれ以降の処理でエラーになったやつを全部キャッチして？だす
                 @output = "?"
             end
@@ -95,6 +74,45 @@ class REPL
             # あとで
         else
             [nil, nil]
+        end
+    end
+
+    def cmd_p *d
+        if d[3].empty? # prmtが指定されていないとき
+            n = addr_num d[0], d[1]
+            unless n[0].nil?
+                n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
+                    puts @buffer[i-1]
+                end
+            else
+                @output = "?"
+            end
+        else # エラー
+            @output = "?"
+        end
+    end
+
+    def cmd_n *d
+        if d[3].empty? # prmtが指定されていないとき
+            n = addr_num d[0], d[1]
+            unless n[0].nil?
+                n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
+                    puts "#{i}: #{@buffer[i-1]}"
+                end
+            else
+                @output = "?"
+            end
+        else # エラー
+            @output = "?"
+        end
+    end
+
+    def cmd_q *d
+        # p d # for debug
+        if d[0] or d[1] or !d[3].empty? # いらないaddr/prmtがある時
+            @output = "?"
+        else
+            exit
         end
     end
 end
