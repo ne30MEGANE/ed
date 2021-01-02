@@ -130,6 +130,30 @@ class REPL
             @output = "?"
         end
     end
+
+    def cmd_a *d
+        if d[3].empty?
+            n = addr_num d[0], d[1]
+            unless n[0].nil?
+                insert = Array.new
+                while true # 入力を受け付ける
+                    str = STDIN.gets(chomp: true)
+                    if str =~ /\./ # .単体が入力された時
+                        break
+                    else #それ以外のなんらかの文字
+                        insert << str
+                    end
+                end
+                insert.each_with_index do |i, idx| # バッファに追加する
+                    @buffer.insert n[1]+idx, i
+                end
+            else #アドレスが与えられなかった場合
+                @output = "?"
+            end
+        else
+            @output = "?"
+        end
+    end
 end
 
 REPL.new
