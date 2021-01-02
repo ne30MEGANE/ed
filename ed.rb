@@ -40,7 +40,12 @@ class REPL
             # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
 
             begin
-                self.send("cmd_#{$3}", $1, $2, $3, $4)
+                unless $3.empty? #コマンドが指定された時
+                    self.send("cmd_#{$3}", $1, $2, $3, $4)
+                else #数字だけの時(改行コマンド)
+                    # p "eps" # for debug
+                    self.send("cmd_eps", $1, $2, $3, $4 )
+                end
             rescue # コマンドとして認識されたけどそれ以降の処理でエラーになったやつを全部キャッチして？だす
                 @output = "?"
             end
@@ -154,6 +159,17 @@ class REPL
             @output = "?"
         end
     end
+
+    def cmd_eps *d
+        if d[2].empty? and d[3].empty? # コマンドとパラメータが空である時
+            n = addr_num d[0], d[1]
+            @cl = n[1]-1 unless n[1].nil? # 後に指定された方をカレント行にする
+            @output = (@cl+1).to_s # カレント行を出力
+        else
+            @output = "?"
+        end
+    end
+
 end
 
 REPL.new
