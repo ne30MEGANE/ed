@@ -115,6 +115,21 @@ class REPL
             exit
         end
     end
+
+    def cmd_d *d
+        if d[3].empty?
+            n = addr_num d[0], d[1]
+            unless n[0].nil?
+                n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
+                    @buffer.delete_at i-1 #指定された行を削除
+                end
+            else
+                @output = "?"
+            end
+        else
+            @output = "?"
+        end
+    end
 end
 
 REPL.new
