@@ -77,8 +77,8 @@ class REPL
             end
         when /.*/ then # 正規表現
             # あとで
-        else
-            [nil, nil]
+        else # アドレスが指定されなかった場合
+            [@cl + 1, @cl + 1] # カレント行
         end
     end
 
@@ -158,6 +158,9 @@ class REPL
         else
             @output = "?"
         end
+    end
+
+    def cmd_= *d
     end
 
     def cmd_eps *d
