@@ -170,11 +170,15 @@ class REPL
     end
 
     def cmd_eps *d
-        if d[2].empty? and d[3].empty? # コマンドとパラメータが空である時
-            n = addr_num d[0], d[1]
-            @cl = n[1]-1 unless n[1].nil? # 後に指定された方をカレント行にする
-            @output = (@cl+1).to_s # カレント行を出力
-        else
+        begin
+            if d[2].empty? and d[3].empty? # コマンドとパラメータが空である時
+                n = addr_num d[0], d[1]
+                @cl = n[1]-1 unless n[1].nil? # 後に指定された方をカレント行にする
+                @output = @buffer[@cl] # カレント行を出力
+            else
+                @output = "?"
+            end
+        rescue
             @output = "?"
         end
     end
