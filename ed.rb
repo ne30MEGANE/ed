@@ -40,6 +40,7 @@ class REPL
             # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
 
             begin
+                # p "cmd_#{$3}" # for debug
                 unless $3.empty? #コマンドが指定された時
                     self.send("cmd_#{$3}", $1, $2, $3, $4)
                 else #数字だけの時(改行コマンド)
@@ -161,6 +162,11 @@ class REPL
     end
 
     def cmd_= *d
+        if d[0].nil? and d[1].nil? and d[3].empty? # アドレスとパラメータが空の時
+            @output = (@cl+1).to_s
+        else
+            @output = "?"
+        end
     end
 
     def cmd_eps *d
