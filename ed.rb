@@ -173,8 +173,12 @@ class REPL
         begin
             if d[2].empty? and d[3].empty? # コマンドとパラメータが空である時
                 n = addr_num d[0], d[1]
-                @cl = n[1]-1 unless n[1].nil? # 後に指定された方をカレント行にする
-                @output = @buffer[@cl] # カレント行を出力
+                if n[1] <= @buffer.size
+                    @cl = n[1]-1 unless n[1].nil? # 後に指定された方をカレント行にする
+                    @output = @buffer[@cl] # カレント行を出力
+                else # 指定された行がまだ存在してなかった場合
+                    @output = "?"
+                end
             else
                 @output = "?"
             end
