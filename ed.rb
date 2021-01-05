@@ -5,7 +5,9 @@ class REPL
         @input = Array.new # 毎回の入力用
         @output = Array.new # 毎回の出力用
         @prompt = "command>" # プロンプト
+        @file = nil # ファイルが指定されたときファイル名を保存
         if ARGV[0] # ファイルが指定された時
+            @file = ARGV[0] # ファイル名(パス)を保持
             f = open(ARGV[0])
             f.each do |line|
                 @buffer.push line.chomp # 改行コードを消してバッファーに読み込む
@@ -39,7 +41,7 @@ class REPL
             # $1 addr,addrか左側だけ / $2 addr右側 ←指定されてなかったらnil
             # $3 cmnd / $4 prmt ←指定されていなかったら空文字列
 
-            begin
+            # begin
                 # p "cmd_#{$3}" # for debug
                 unless $3.empty? #コマンドが指定された時
                     self.send("cmd_#{$3}", $1, $2, $3, $4)
@@ -47,9 +49,9 @@ class REPL
                     # p "eps" # for debug
                     self.send("cmd_eps", $1, $2, $3, $4 )
                 end
-            rescue # コマンドとして認識されたけどそれ以降の処理でエラーになったやつを全部キャッチして？だす
-                @output = "?"
-            end
+            # rescue # コマンドとして認識されたけどそれ以降の処理でエラーになったやつを全部キャッチして？だす
+            #     @output = "?"
+            # end
         else
             @output = "?" #どのコマンドにも当てはまらない時
         end
@@ -150,15 +152,40 @@ class REPL
                         insert << str
                     end
                 end
-                insert.each_with_index do |i, idx| # バッファに追加する
+                insert.each_with_index do |i, idx| # バッファに追加する(n行目の次に追加)
                     @buffer.insert n[1]+idx, i
                 end
-            else #アドレスが与えられなかった場合
+            else
                 @output = "?"
             end
         else
             @output = "?"
         end
+    end
+
+    def cmd_w *d
+        #アドレスの数字処理
+        if d[0].nil? and d[1].nil? # アドレスが指定されないとき
+            n = [1, @buffer.size]
+        else
+            n = addr_num d[0], d[1]
+        end
+
+        #ファイル名関係の処理
+        if d[3].empty?
+            filename = @file || "file.txt" # 開いた元のファイル名orデフォルトファイル名
+        else
+            filename = d[3].to_s
+        end
+        
+        #書き込みと書き込みバイト数出力
+        size = 0
+        File.open(filename, "w") do |f|
+            @buffer.each do |b|
+                size += f.write b.to_s + "\n"
+            end
+        end
+        @output = (size - @buffer.size).to_s # 書き込んだbyte数を出力
     end
 
     def cmd_= *d
