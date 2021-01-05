@@ -34,7 +34,7 @@ class REPL
 
     def ed_eval # 解釈
         addr = '(?:\d+|[.$,;]|\/.*\/)' # 数字か.$,;か正規表現(任意の文字列)
-        cmnd = '(?:[acdgijnpqrw=]|wq|\z)' # 1文字のコマンド各種 or wqコマンド
+        cmnd = '(?:wq|[acdgijnpqrw=]|\z)' # 1文字のコマンド各種 or wqコマンド
         prmt = '(?:.*)' # 任意の文字列
         if @input =~ /\A(#{addr}(,#{addr})?)?(#{cmnd})(#{prmt})?\z/
             # p $1, $2, $3, $4 # for debug
@@ -186,6 +186,11 @@ class REPL
             end
         end
         @output = (size - @buffer.size).to_s # 書き込んだbyte数を出力
+    end
+
+    def cmd_wq *d
+        cmd_w *d
+        exit
     end
 
     def cmd_= *d
