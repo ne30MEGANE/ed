@@ -142,22 +142,46 @@ class REPL
     def cmd_a *d
         if d[3].empty?
             n = addr_num d[0], d[1]
-            unless n[0].nil?
-                insert = Array.new
-                while true # 入力を受け付ける
-                    str = STDIN.gets(chomp: true)
-                    if str =~ /\./ # .単体が入力された時
-                        break
-                    else #それ以外のなんらかの文字
-                        insert << str
-                    end
+            
+            insert = Array.new
+            while true # 入力を受け付ける
+                str = STDIN.gets(chomp: true)
+                if str =~ /\./ # .単体が入力された時
+                    break
+                else #それ以外のなんらかの文字
+                    insert << str
                 end
-                insert.each_with_index do |i, idx| # バッファに追加する(n行目の次に追加)
-                    @buffer.insert n[1]+idx, i
-                end
-            else
-                @output = "?"
             end
+            insert.each_with_index do |i, idx| # バッファに追加する(n行目の次に追加)
+                @buffer.insert n[1]+idx, i
+            end
+        else
+            @output = "?"
+        end
+    end
+
+    def cmd_c *d
+        if d[3].empty?
+            n = addr_num d[0], d[1]
+
+            insert = Array.new
+            while true # 入力を受け付ける
+                str = STDIN.gets(chomp: true)
+                if str =~ /\./
+                    break
+                else
+                    insert << str
+                end
+            end
+            n[0].step n[1] do |i| # 指定行を削除
+                # 一応アドレス二つ取れるようになってるけど
+                # 本来そんなような使い方はされないものだと思います。
+                @buffer.delete_at i-1
+            end
+            insert.each_with_index do |i, idx| # 内容を挿入
+                @buffer.insert n[0]-1+idx, i
+            end
+
         else
             @output = "?"
         end
