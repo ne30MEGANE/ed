@@ -91,6 +91,7 @@ class REPL
             unless n[0].nil?
                 n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
                     puts @buffer[i-1]
+                    @cl = i-1 # カレント行は出力した最後の行
                 end
             else
                 @output = "?"
@@ -106,6 +107,7 @@ class REPL
             unless n[0].nil?
                 n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
                     puts "#{i}: #{@buffer[i-1]}"
+                    @cl = i-1 # カレント行は出力した最後の行
                 end
             else
                 @output = "?"
@@ -130,6 +132,7 @@ class REPL
             unless n[0].nil?
                 n[0].step(n[1]) do |i| # n,mの時nからmまで繰り返す
                     @buffer.delete_at i-1 #指定された行を削除
+                    @cl = 0 # カレント行は0に
                 end
             else
                 @output = "?"
@@ -154,6 +157,7 @@ class REPL
             end
             insert.each_with_index do |i, idx| # バッファに追加する(n行目の次に追加)
                 @buffer.insert n[1]+idx, i
+                @cl = n[1] + idx # カレント行は最後に挿入された行
             end
         else
             @output = "?"
@@ -206,6 +210,7 @@ class REPL
             end
             insert.each_with_index do |i, idx| # 内容を挿入
                 @buffer.insert n[0]-1+idx, i
+                @cl = n[0] - 1 + idx # カレント行は最終入力行
             end
 
         else
