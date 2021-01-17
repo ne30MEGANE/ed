@@ -190,6 +190,22 @@ class REPL
         end
     end
 
+    def cmd_j *d
+        if d[3].empty?
+            n = addr_num d[0], d[1]
+            if n[0]+1 == n[1] # (a, a+1)で指定された時のみ結合を実行する
+                newrow = @buffer[n[0]-1] + @buffer[n[1]-1]
+                @buffer[n[0]-1] = newrow #置き換える
+                @buffer.delete_at n[1]-1 #くっつけた後ろの行を消す
+                @cl = n[0]-1 # カレント行は結合された側にする
+            else # 同じ数字同士とか複数行とか変なアドレス指定の仕方をされたらエラーにする
+                @output = "?"
+            end
+        else
+            @output = "?"
+        end
+    end
+
     def cmd_c *d
         if d[3].empty?
             n = addr_num d[0], d[1]
