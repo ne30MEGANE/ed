@@ -160,6 +160,32 @@ class REPL
         end
     end
 
+    def cmd_i *d
+        if d[3].empty?
+            n = addr_num d[0], d[1]
+            
+            insert = Array.new
+            if n[1] != 0
+                while true # 入力を受け付ける
+                    str = STDIN.gets(chomp: true)
+                    if str =~ /\./ # .単体が入力された時
+                        break
+                    else #それ以外のなんらかの文字
+                        insert << str
+                    end
+                end
+                insert.each_with_index do |i, idx| # バッファに追加する(n行目の前に追加)
+                    @buffer.insert n[1]-1+idx, i
+                    @cl = n[1] - 1 + idx # カレント行は最後に挿入された行
+                end
+            else
+                @output = "?" # アドレスに0は無効
+            end
+        else
+            @output = "?"
+        end
+    end
+
     def cmd_c *d
         if d[3].empty?
             n = addr_num d[0], d[1]
